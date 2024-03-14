@@ -31,6 +31,10 @@ public class MetadataDocSeeListHandler extends AbstractHandler<DocletTag, DocCla
         if(ArrayUtil.isNotEmpty(strings)) {
             final String className = strings[0];
             docClass.setFullName(className);
+            docClass.setName(className);
+            if (strings.length > 1) {
+                docClass.setRemark(strings[1]);
+            }
             //TODO: 其他信息的获取
             // 可以在 maven 执行的时候，放置一个大大的 context，初始化所有的 javaclass 信息。
         }

@@ -18,17 +18,29 @@ public class SimplifyDocMethod extends SimplifyDocBase {
     /**
      * 方法出参
      */
-    private List<SimplifyDocField> returns;
+    private SimplifyDocClass returns;
 
     /**
      * 存放参数详情
      */
     private Map<String, List<SimplifyDocField>> paramDetails;
 
-    /**
-     * 存放返回详情列表
+
+    private String signature;
+
+    public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+
+	/**
+     * 存放异常详情
      */
-    private Map<String, List<SimplifyDocField>> returnDetails;
+    private List<SimplifyDocClass> exceptions;
+
 
     public List<SimplifyDocField> getParams() {
         return params;
@@ -38,11 +50,11 @@ public class SimplifyDocMethod extends SimplifyDocBase {
         this.params = params;
     }
 
-    public List<SimplifyDocField> getReturns() {
+    public SimplifyDocClass getReturn() {
         return returns;
     }
 
-    public void setReturns(List<SimplifyDocField> returns) {
+    public void setReturn(SimplifyDocClass returns) {
         this.returns = returns;
     }
 
@@ -54,11 +66,12 @@ public class SimplifyDocMethod extends SimplifyDocBase {
         this.paramDetails = paramDetails;
     }
 
-    public Map<String, List<SimplifyDocField>> getReturnDetails() {
-        return returnDetails;
+    public List<SimplifyDocClass> getExceptions() {
+        return exceptions;
     }
 
-    public void setReturnDetails(Map<String, List<SimplifyDocField>> returnDetails) {
-        this.returnDetails = returnDetails;
+    public void setExceptions(List<SimplifyDocClass> exceptions) {
+        this.exceptions = exceptions;
     }
+
 }

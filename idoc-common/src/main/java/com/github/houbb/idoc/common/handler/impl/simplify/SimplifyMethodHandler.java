@@ -1,5 +1,6 @@
 package com.github.houbb.idoc.common.handler.impl.simplify;
 
+import com.github.houbb.idoc.api.model.metadata.DocClass;
 import com.github.houbb.idoc.api.model.metadata.DocField;
 import com.github.houbb.idoc.api.model.metadata.DocMethod;
 import com.github.houbb.idoc.api.model.metadata.DocMethodParameter;
@@ -7,6 +8,7 @@ import com.github.houbb.idoc.api.model.metadata.DocMethodReturn;
 import com.github.houbb.idoc.common.handler.IHandler;
 import com.github.houbb.idoc.common.model.SimplifyDocField;
 import com.github.houbb.idoc.common.model.SimplifyDocMethod;
+import com.github.houbb.idoc.common.model.SimplifyDocClass;
 import com.github.houbb.idoc.common.util.CollectionUtil;
 import com.github.houbb.idoc.common.util.CommentUtil;
 import com.github.houbb.idoc.common.util.ObjectUtil;
@@ -32,6 +34,7 @@ public class SimplifyMethodHandler implements IHandler<DocMethod, SimplifyDocMet
         commonDocMethod.setComment(docMethod.getComment());
         commonDocMethod.setRemark(docMethod.getRemark());
         commonDocMethod.setName(docMethod.getName());
+        commonDocMethod.setSignature(docMethod.getSignature());
 
         //v0.2.0 添加第一行备注，避免过多，导致格式错乱
         String commentFirstLine = CommentUtil.getFirstLine(commonDocMethod.getComment());
@@ -39,14 +42,17 @@ public class SimplifyMethodHandler implements IHandler<DocMethod, SimplifyDocMet
 
         // 处理入参
         final List<SimplifyDocField> params = buildParams(docMethod.getDocMethodParameterList());
+        commonDocMethod.setParams(params);
+        commonDocMethod.setParamDetails(buildFieldDetails(params));
 
         // 处理出参
-        final List<SimplifyDocField> returns = buildRuturns(docMethod.getDocMethodReturn());
+        final SimplifyDocClass ret = buildRuturn(docMethod.getDocMethodReturn());
+        commonDocMethod.setReturn(ret);
 
-        commonDocMethod.setParams(params);
-        commonDocMethod.setReturns(returns);
-        commonDocMethod.setParamDetails(buildFieldDetails(params));
-        commonDocMethod.setReturnDetails(buildFieldDetails(returns));
+        // 处理异常
+        final List<SimplifyDocClass> excetions = buildExceptions(docMethod.getExceptionList());
+        commonDocMethod.setExceptions(excetions);
+
         return commonDocMethod;
     }
 
@@ -64,14 +70,16 @@ public class SimplifyMethodHandler implements IHandler<DocMethod, SimplifyDocMet
      * @param docMethodReturn 返回结果
      * @return 构建后的参数列表
      */
-    private List<SimplifyDocField> buildRuturns(final DocMethodReturn docMethodReturn) {
-        if(ObjectUtil.isNull(docMethodReturn)) {
-            return Collections.emptyList();
-        }
+    private SimplifyDocClass buildRuturn(final DocMethodReturn docMethodReturn) {
+        SimplifyMethodReturnHandler handle = new SimplifyMethodReturnHandler();
+        return handle.handle(docMethodReturn);
+    }
 
-        // 当前返回类的所有字段信息
-        final List<DocField> docFieldList = docMethodReturn.getDocFieldList();
-        return CollectionUtil.buildList(docFieldList, new SimplifyDocFieldHandler());
+    private List<SimplifyDocClass> buildExceptions(final List<DocClass> docMethodExceptionList) {
+        if(CollectionUtil.isEmpty(docMethodExceptionList)) {
+            return null;
+        }
+        return CollectionUtil.buildList(docMethodExceptionList, new SimplifyClassHandler());
     }
 
     /**

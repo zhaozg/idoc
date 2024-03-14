@@ -24,15 +24,11 @@ public class DocMethodReturn extends BaseDoc {
      */
     private String packageName;
 
-    /**
-     * 方法列表
+    /*
+     * 返回array
      */
-    private List<DocMethod> docMethodList;
+    private boolean array;
 
-    /**
-     * 字段列表
-     */
-    private List<DocField> docFieldList;
 
     public String getReturnComment() {
         return returnComment;
@@ -58,20 +54,12 @@ public class DocMethodReturn extends BaseDoc {
         this.packageName = packageName;
     }
 
-    public List<DocMethod> getDocMethodList() {
-        return docMethodList;
+    public boolean getIsArray() {
+        return array;
     }
 
-    public void setDocMethodList(List<DocMethod> docMethodList) {
-        this.docMethodList = docMethodList;
-    }
-
-    public List<DocField> getDocFieldList() {
-        return docFieldList;
-    }
-
-    public void setDocFieldList(List<DocField> docFieldList) {
-        this.docFieldList = docFieldList;
+    public void setIsArray(boolean array) {
+        this.array = array;
     }
 
 }

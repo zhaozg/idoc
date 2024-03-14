@@ -24,6 +24,12 @@ public class SimplifyDocClass extends SimplifyDocBase {
      */
     private String docPath;
 
+    /**
+     * 字段类型别名
+     * @since 0.1.0
+     */
+    private String typeAlias;
+
     public String getPackageName() {
         return packageName;
     }
@@ -46,6 +52,14 @@ public class SimplifyDocClass extends SimplifyDocBase {
 
     public void setDocPath(String docPath) {
         this.docPath = docPath;
+    }
+
+    public String getTypeAlias() {
+        return typeAlias;
+    }
+
+    public void setTypeAlias(String typeAlias) {
+        this.typeAlias = typeAlias;
     }
 
 }
