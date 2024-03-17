@@ -43,9 +43,9 @@
         <maven-core.version>3.5.0</maven-core.version>
 
         <!--============================== OTHER ==============================-->
-        <qdox.version>1.12.1</qdox.version>
+        <qdox.version>2.1.0</qdox.version>
         <junit.version>4.12</junit.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.32</freemarker.version>
         <poi.version>3.9</poi.version>
         <poi-ooxml-schemas.version>3.9</poi-ooxml-schemas.version>
         <poi-ooxml.version>3.7</poi-ooxml.version>

@@ -9,12 +9,9 @@ package com.github.houbb.idoc.common.util;
 import com.github.houbb.idoc.common.handler.IHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.xml.ws.handler.Handler;
 
 /**
  * 集合工具类
@@ -66,12 +63,12 @@ public final class CollectionUtil {
      * @param array 数组
      * @param <T> 泛型
      */
-    public static <T> void addArray(final Collection<T> collection, final T[] array) {
-        if(ArrayUtil.isEmpty(array)) {
+    public static <T> void addArray(final List<T> collection, final List<T> array) {
+        if(array.isEmpty()) {
             return;
         }
 
-        collection.addAll(Arrays.asList(array));
+        collection.addAll(array);
     }
 
 }

@@ -16,9 +16,9 @@ import java.util.Map;
  */
 public final class FreemarkerUtil {
 
-    /**    
-     *  freemarker util    
-     */    
+    /**
+     *  freemarker util
+     */
     private FreemarkerUtil(){}
 
     /**
@@ -51,12 +51,12 @@ public final class FreemarkerUtil {
     public static Configuration getConfiguration(String encoding, boolean isForce) {
         if (configuration == null
                 || isForce) {
-            configuration = new Configuration();
+            configuration = new Configuration(Configuration.VERSION_2_3_30);
             //编码
             configuration.setEncoding(Locale.getDefault(), encoding);
 
             //// 设置对象的包装器
-            configuration.setObjectWrapper(new DefaultObjectWrapper());
+            configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_30));
 
             // 设置异常处理器//这样的话就可以${a.b.c.d}即使没有属性也不会出错
             configuration.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);

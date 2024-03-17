@@ -46,7 +46,7 @@ public class MetadataDocClassHandler extends AbstractHandler<JavaClass, DocClass
 
         // java 默认的字段
         // TODO: 这里直接 return 应该是为了避免死循环和额外处理
-        if (JavaClassUtil.isPrimitiveOrJdk(javaClass.asType())) {
+        if (JavaClassUtil.isPrimitiveOrJdk(javaClass)) {
             return docClass;
         }
 
@@ -55,11 +55,11 @@ public class MetadataDocClassHandler extends AbstractHandler<JavaClass, DocClass
         docClass.setComment(javaClass.getComment());
 
         // 类-标签信息
-        final DocletTag[] docletTagArray = javaClass.getTags();
+        final List<DocletTag> docletTagArray = javaClass.getTags();
         docClass.setDocTagList(MetadataDocUtil.buildDocTagList(docletTagArray));
 
         // 类-注解信息
-        final Annotation[] annotations = javaClass.getAnnotations();
+        final List<JavaAnnotation> annotations = javaClass.getAnnotations();
         docClass.setDocAnnotationList(MetadataDocUtil.buildDocAnnotationList(annotations));
 
         // 字段信息
@@ -67,7 +67,7 @@ public class MetadataDocClassHandler extends AbstractHandler<JavaClass, DocClass
         docClass.setDocFieldList(CollectionUtil.buildList(javaFieldList, new MetadataDocFieldHandler(docConfig)));
 
         // 方法信息
-        final JavaMethod[] javaMethods = javaClass.getMethods();
+        final List<JavaMethod> javaMethods = javaClass.getMethods();
         docClass.setDocMethodList(ArrayUtil.buildList(javaMethods, new MetadataDocMethodHandler(docClass, docConfig)));
 
         return docClass;

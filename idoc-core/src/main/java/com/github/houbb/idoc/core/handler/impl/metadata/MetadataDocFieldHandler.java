@@ -3,14 +3,11 @@ package com.github.houbb.idoc.core.handler.impl.metadata;
 import com.github.houbb.idoc.api.model.config.DocConfig;
 import com.github.houbb.idoc.api.model.metadata.DocField;
 import com.github.houbb.idoc.common.handler.AbstractHandler;
-import com.github.houbb.idoc.common.util.CollectionUtil;
 import com.github.houbb.idoc.common.util.ObjectUtil;
 import com.github.houbb.idoc.core.constant.JavaTagConstant;
-import com.github.houbb.idoc.core.util.JavaClassUtil;
 import com.github.houbb.idoc.core.util.JavaTypeAliasUtil;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.Type;
 
 import java.util.List;
 
@@ -52,18 +49,6 @@ public class MetadataDocFieldHandler extends AbstractHandler<JavaField, DocField
             docField.setRemark(remarkTag.getValue());
         }
 
-        // 递归处理处理当前字段下的特殊字段
-        final Type fieldType = javaField.getType();
-        if (!JavaClassUtil.isPrimitiveOrJdk(fieldType)) {
-            final List<JavaField> javaFieldList = JavaClassUtil
-                    .getAllJavaFieldList(fieldType.getJavaClass());
-            // 循环依赖。如果当前字段对应的字段列表中含有和当前字段
-            if(JavaClassUtil.isDeadCycle(javaField, javaFieldList)) {
-                return docField;
-            }
-
-            docField.setDocFieldList(CollectionUtil.buildList(javaFieldList, new MetadataDocFieldHandler(docConfig)));
-        }
         return docField;
     }
 

@@ -4,10 +4,12 @@ import com.github.houbb.idoc.common.util.CollectionUtil;
 import com.github.houbb.idoc.common.util.ObjectUtil;
 import com.github.houbb.log.integration.core.Log;
 import com.github.houbb.log.integration.core.LogFactory;
-import com.thoughtworks.qdox.JavaDocBuilder;
+import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.library.ClassLibraryBuilder;
+import com.thoughtworks.qdox.library.SortedClassLibraryBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.Type;
+import com.thoughtworks.qdox.model.JavaType;
 import com.thoughtworks.qdox.parser.ParseException;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -30,14 +32,14 @@ import java.util.*;
  */
 public final class JavaClassUtil {
 
-    /**    
-     *  java类util    
-     */    
+    /**
+     *  java类util
+     */
     private JavaClassUtil(){}
 
-    /**    
-     *  我不是例外    
-     */    
+    /**
+     *  我不是例外
+     */
     private static final JavaClassUtil INSTANCE = new JavaClassUtil();
 
     /**
@@ -86,12 +88,12 @@ public final class JavaClassUtil {
      * @throws IOException  if any
      * @throws MojoExecutionException   if any
      */
-    public JavaClass[] getQdoxClasses(MavenProject project, String encoding,
+    public Collection<JavaClass> getQdoxClasses(MavenProject project, String encoding,
                                       final String includes, final String excludes)
             throws IOException, MojoExecutionException {
         if ("pom".equalsIgnoreCase(project.getPackaging())) {
             getLog().warn("This project has 'pom' packaging, no Java sources is available.");
-            return new JavaClass[]{};
+            return new ArrayList<JavaClass>();
         }
 
         List<File> javaFiles = new LinkedList<>();
@@ -104,8 +106,13 @@ public final class JavaClassUtil {
             }
         }
 
-        JavaDocBuilder builder = new JavaDocBuilder();
-        builder.getClassLibrary().addClassLoader(getProjectClassLoader(project));
+
+        ClassLibraryBuilder libraryBuilder =
+            new SortedClassLibraryBuilder();
+        //libraryBuilder.appendClassLoader(getProjectClassLoader(project));
+        libraryBuilder.appendClassLoader(ClassLoader.getSystemClassLoader());
+
+        JavaProjectBuilder builder = new JavaProjectBuilder(libraryBuilder);
         builder.setEncoding(encoding);
         for (File f : javaFiles) {
             if (!f.getAbsolutePath().toLowerCase(Locale.ENGLISH).endsWith(".java")) {
@@ -127,11 +134,11 @@ public final class JavaClassUtil {
      * @return the classLoader for the given project using lazy instantiation.
      * @throws MojoExecutionException if any
      */
-    /**    
-     * 获得项目类加载器    
-     *    
-     * @param project 项目    
-     * @return java.lang.ClassLoader    
+    /**
+     * 获得项目类加载器
+     *
+     * @param project 项目
+     * @return java.lang.ClassLoader
      * @throws MojoExecutionException if any
      */
     private ClassLoader getProjectClassLoader(MavenProject project)
@@ -147,7 +154,7 @@ public final class JavaClassUtil {
             List<URL> urls = new ArrayList<>(classPath.size());
             for (String filename : classPath) {
                 try {
-                    urls.add(new File(filename).toURL());
+                    urls.add(new File(filename).toURI().toURL());
                 } catch (MalformedURLException e) {
                     throw new MojoExecutionException("MalformedURLException: " + e.getMessage(), e);
                 }
@@ -170,7 +177,7 @@ public final class JavaClassUtil {
      * @param p p
      * @return java.util.List
      * @throws DependencyResolutionRequiredException if any
-     */    
+     */
     protected List<String> getCompileClasspathElements(MavenProject p)
             throws DependencyResolutionRequiredException {
         return (p.getCompileClasspathElements() == null
@@ -182,23 +189,23 @@ public final class JavaClassUtil {
      * @param p not null maven project.
      * @return the list of source paths for the given project.
      */
-    /**    
-     * 获取项目源的根    
-     *    
-     * @param p p    
-     * @return java.util.List    
-     */    
+    /**
+     * 获取项目源的根
+     *
+     * @param p p
+     * @return java.util.List
+     */
     protected List<String> getProjectSourceRoots(MavenProject p) {
         return (p.getCompileSourceRoots() == null
                 ? Collections.<String>emptyList()
                 : new LinkedList<String>(p.getCompileSourceRoots()));
     }
 
-    /**    
-     * 得到日志    
-     *    
-     * @return com.github.houbb.log.integration.core.Log    
-     */    
+    /**
+     * 得到日志
+     *
+     * @return com.github.houbb.log.integration.core.Log
+     */
     private Log getLog() {
         return LogFactory.getLog(this.getClass());
     }
@@ -208,13 +215,13 @@ public final class JavaClassUtil {
      * @param modifiers list of modifiers (public, private, protected, package)
      * @return <code>true</code> if modifier is align with <code>level</code>.
      */
-    /**    
-     * 在水平上    
-     *    
-     * @param modifiers 修饰符    
-     * @param level 水平    
-     * @return boolean    
-     */    
+    /**
+     * 在水平上
+     *
+     * @param modifiers 修饰符
+     * @param level 水平
+     * @return boolean
+     */
     public static boolean isInLevel(String[] modifiers, final String level )
     {
         List<String> modifiersAsList = Arrays.asList( modifiers );
@@ -293,8 +300,8 @@ public final class JavaClassUtil {
      * @param type 类型
      * @return 是否
      */
-    public static boolean isPrimitiveOrJdk(final Type type) {
-        return type.isPrimitive()
+    public static boolean isPrimitiveOrJdk(final JavaType type) {
+        return type.getClass().isPrimitive()
                 || type.getFullyQualifiedName().startsWith("java.")
                 || type.getFullyQualifiedName().startsWith("sun.");
     }

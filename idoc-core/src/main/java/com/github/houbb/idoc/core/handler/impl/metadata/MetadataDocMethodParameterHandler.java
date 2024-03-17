@@ -43,7 +43,7 @@ public class MetadataDocMethodParameterHandler extends AbstractHandler<JavaMetho
 
     @Override
     protected List<DocMethodParameter> doHandle(final JavaMethod javaMethod) {
-        final JavaParameter[] javaParameters = javaMethod.getParameters();
+        final List<JavaParameter> javaParameters = javaMethod.getParameters();
         return ArrayUtil.buildList(javaParameters, new IHandler<JavaParameter, DocMethodParameter>() {
             @Override
             public DocMethodParameter handle(JavaParameter javaParameter) {
@@ -63,21 +63,24 @@ public class MetadataDocMethodParameterHandler extends AbstractHandler<JavaMetho
                 // 常规的判断方式，排除掉 jdk 自带的类型，其他全部为自定义类型。(推荐这种方式)
                 if (needEntryFieldHandle(javaParameter)) {
                     final List<JavaField> javaFieldList = JavaClassUtil
-                            .getAllJavaFieldList(javaParameter.getType().getJavaClass());
+                            .getAllJavaFieldList(javaParameter.getJavaClass());
                     docMethodParameter.setDocFieldList(CollectionUtil.buildList(javaFieldList, new MetadataDocFieldHandler(docConfig)));
                 }
-                DocletTag[] docletTags = javaMethod.getTagsByName(JavaTagConstant.PARAM);
-                if (ArrayUtil.isNotEmpty(docletTags)) {
+                List<DocletTag> docletTags = javaMethod.getTagsByName(JavaTagConstant.PARAM);
+                if (!docletTags.isEmpty()) {
                     for (DocletTag docletTag : docletTags) {
-                        String[] strings = docletTag.getParameters();
+                        List<String> strings = docletTag.getParameters();
                         // 根据名称的指定信息做匹配
                         //1. 第一个参数是名称
                         //2. 第二个参数是值
-                        if (ArrayUtil.isNotEmpty(strings)
-                                && paramName.equalsIgnoreCase(strings[0])
-                                && strings.length >= 2) {
-                            docMethodParameter.setComment(strings[1]);
-                            break;
+                        if (!strings.isEmpty())
+                        {
+                            String[] strs = new String[strings.size()];
+                            strs = strings.toArray(strs);
+                            if(paramName.equalsIgnoreCase(strs[0]) && strs.length>= 2) {
+                              docMethodParameter.setComment(strs[1]);
+                              break;
+                            }
                         }
                     }
                 }

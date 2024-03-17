@@ -1,7 +1,6 @@
 package com.github.houbb.idoc.core.core.impl;
 
 
-import com.github.houbb.heaven.util.util.ArrayUtil;
 import com.github.houbb.idoc.api.model.metadata.DocClass;
 import com.github.houbb.idoc.common.exception.IDocRuntimeException;
 import com.github.houbb.idoc.common.handler.IHandler;
@@ -17,6 +16,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -80,8 +80,8 @@ public abstract class AbstractExecuteService implements ExecuteService {
         beforeExecute();
 
         //2. 执行
-        JavaClass[] javaClasses = getJavaClassArray();
-        if (ArrayUtil.isEmpty(javaClasses)) {
+        Collection<JavaClass> javaClasses = getJavaClassArray();
+        if (javaClasses.isEmpty()) {
             log.warn("JavaClass array is empty, stop execute()!");
             return;
         }
@@ -90,15 +90,15 @@ public abstract class AbstractExecuteService implements ExecuteService {
         List<DocClass> docClassList = new ArrayList<>();
         IHandler<JavaClass, DocClass> javaClassHandler = configJavaClassHandler();
 
-        int totalNum = javaClasses.length;
+        int totalNum = javaClasses.size();
         log.info("共计 【" + totalNum + "】 个文件待处理，请耐心等待。进度如下：");
         ConsoleProgressBar cpb = new ConsoleProgressBar(0, totalNum,
                 100, '=');
-        for (int i = 0; i < javaClasses.length; i++) {
-            final JavaClass javaClass = javaClasses[i];
+        int i=0;
+        for (final JavaClass javaClass : javaClasses) {
             DocClass docClass = javaClassHandler.handle(javaClass);
             docClassList.add(docClass);
-            cpb.show((long) (i + 1));
+            cpb.show((long) (++i));
         }
 
         //3. 执行之后
@@ -131,16 +131,16 @@ public abstract class AbstractExecuteService implements ExecuteService {
      *
      * @return java class array
      */
-    JavaClass[] getJavaClassArray() {
+    Collection<JavaClass> getJavaClassArray() {
         try {
             log.debug("Get java class with project: {}, encoding: {}, includes: {}, excludes: {}",
                     project, encoding, includes, excludes);
-            JavaClass[] javaClasses = JavaClassUtil.getInstance().getQdoxClasses(project, encoding, includes, excludes);
-            log.debug("Get java class with result: {}", Arrays.toString(javaClasses));
+            Collection<JavaClass> javaClasses = JavaClassUtil.getInstance().getQdoxClasses(project, encoding, includes, excludes);
+            log.debug("Get java class with result: {}", Arrays.toString(javaClasses.toArray()));
             return javaClasses;
         } catch (IOException | MojoExecutionException e) {
             log.error("AbstractExecuteService meet ex: " + e, e);
-            return new JavaClass[]{};
+            return new ArrayList<JavaClass>();
         }
     }
 

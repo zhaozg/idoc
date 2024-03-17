@@ -9,7 +9,7 @@ import com.github.houbb.idoc.core.constant.JavaTagConstant;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
-import com.thoughtworks.qdox.model.Type;
+import com.thoughtworks.qdox.model.JavaType;
 
 /**
  * 处理方法的返回值对象
@@ -35,7 +35,7 @@ public class MetadataDocReturnClassHandler extends AbstractHandler<JavaMethod, D
 
     @Override
     protected DocMethodReturn doHandle(JavaMethod javaMethod) {
-        JavaClass returnClass = isVoidReturnType(javaMethod) ? null : javaMethod.getReturnType().getJavaClass();
+        JavaClass returnClass = isVoidReturnType(javaMethod) ? null : javaMethod.getReturns();
         DocMethodReturn docMethodReturn = new DocMethodReturn();
 
         // 注释
@@ -91,8 +91,8 @@ public class MetadataDocReturnClassHandler extends AbstractHandler<JavaMethod, D
      * @return 是否为空返回值
      */
     private boolean isVoidReturnType(final JavaMethod javaMethod) {
-        final Type type = javaMethod.getReturnType();
-        return type == null || type.equals(Type.VOID);
+        final JavaType type = javaMethod.getReturnType();
+        return type == null || type.getValue().equals("void");
     }
 
     /**

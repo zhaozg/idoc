@@ -5,6 +5,8 @@
 
 package com.github.houbb.idoc.core.handler.impl.metadata;
 
+import java.util.List;
+
 import com.github.houbb.idoc.api.model.metadata.DocClass;
 import com.github.houbb.idoc.common.handler.AbstractHandler;
 import com.github.houbb.idoc.common.util.ArrayUtil;
@@ -24,16 +26,18 @@ public class MetadataDocSeeListHandler extends AbstractHandler<DocletTag, DocCla
     @Override
     protected DocClass doHandle(DocletTag docletTag) {
         DocClass docClass = new DocClass();
-        String[] strings = docletTag.getParameters();
+        List<String> strings = docletTag.getParameters();
         // 根据名称的指定信息做匹配
         //1. 第一个参数是 @see 信息全称
         //2. 第二个参数是 备注
-        if(ArrayUtil.isNotEmpty(strings)) {
-            final String className = strings[0];
+        if(!strings.isEmpty()) {
+            String[] astr = new String[strings.size()];
+            astr = strings.toArray(astr);
+            final String className = astr[0];
             docClass.setFullName(className);
             docClass.setName(className);
-            if (strings.length > 1) {
-                docClass.setRemark(strings[1]);
+            if (astr.length > 1) {
+                docClass.setRemark(astr[1]);
             }
             //TODO: 其他信息的获取
             // 可以在 maven 执行的时候，放置一个大大的 context，初始化所有的 javaclass 信息。

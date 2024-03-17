@@ -40,7 +40,8 @@ public class MetadataDocMethodHandler extends AbstractHandler<JavaMethod, DocMet
         DocMethod docMethod = new DocMethod();
         docMethod.setName(javaMethod.getName());
         docMethod.setComment(javaMethod.getComment());
-        docMethod.setSignature(javaMethod.getCallSignature());
+        //docMethod.setSignature(javaMethod.getCallSignature());
+        docMethod.setSignature(javaMethod.getDeclarationSignature(false));
         docMethod.setModifiers(javaMethod.getModifiers());
         DocletTag docletTag = javaMethod.getTagByName(JavaTagConstant.SINCE);
         if (ObjectUtil.isNotNull(docletTag)) {
@@ -48,7 +49,7 @@ public class MetadataDocMethodHandler extends AbstractHandler<JavaMethod, DocMet
         }
 
         // tags 信息
-        DocletTag[] docletTags = javaMethod.getTags();
+        List<DocletTag> docletTags = javaMethod.getTags();
         List<DocTag> docTagList = MetadataDocUtil.buildDocTagList(docletTags);
         docMethod.setDocTagList(docTagList);
 
@@ -61,12 +62,12 @@ public class MetadataDocMethodHandler extends AbstractHandler<JavaMethod, DocMet
         docMethod.setDocMethodParameterList(docMethodParameterList);
 
         // @see 列表信息添加
-        DocletTag[] seeDocletTags = javaMethod.getTagsByName(JavaTagConstant.SEE);
+        List<DocletTag> seeDocletTags = javaMethod.getTagsByName(JavaTagConstant.SEE);
         List<DocClass> seeDocClassList = ArrayUtil.buildList(seeDocletTags, new MetadataDocSeeListHandler());
         docMethod.setSeeList(seeDocClassList);
 
         // 抛出的异常信息列表
-        DocletTag[] throwDocletTags = javaMethod.getTagsByName(JavaTagConstant.THROWS);
+        List<DocletTag> throwDocletTags = javaMethod.getTagsByName(JavaTagConstant.THROWS);
         List<DocClass> throwDocClassList = ArrayUtil.buildList(throwDocletTags, new MetadataDocSeeListHandler());
         docMethod.setExceptionList(throwDocClassList);
 

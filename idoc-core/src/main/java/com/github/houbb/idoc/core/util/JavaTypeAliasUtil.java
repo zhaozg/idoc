@@ -1,7 +1,9 @@
 package com.github.houbb.idoc.core.util;
 
-import com.thoughtworks.qdox.model.Type;
 import org.apache.commons.lang3.StringUtils;
+
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaType;
 
 import java.util.Collections;
 import java.util.Map;
@@ -83,11 +85,12 @@ public final class JavaTypeAliasUtil {
      * @param type 类型
      * @return 别名
      */
-    public static String getAliasName(final Map<String, String> aliasMap, final Type type) {
-        if(type.isArray()) {
+    public static String getAliasName(final Map<String, String> aliasMap, final JavaType type) {
+        final JavaClass cls = (JavaClass)type;
+        if(cls.isArray()) {
             // 数组类型
             return aliasMap.get("array");
-        } else if(type.isVoid()) {
+        } else if(cls.isVoid()) {
             // 空类型
             return aliasMap.get("void");
         } else {

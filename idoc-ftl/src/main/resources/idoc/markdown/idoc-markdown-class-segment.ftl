@@ -13,7 +13,9 @@ ${class.remark!class.comment!"暂无说明"}
 
 ${method.remark!method.comment!"暂无说明"}
 
-> ${method.signature}
+```java
+${method.signature}
+```
 
 <#if method.params?? && (method.params?size > 0)>
 #### 方法参数

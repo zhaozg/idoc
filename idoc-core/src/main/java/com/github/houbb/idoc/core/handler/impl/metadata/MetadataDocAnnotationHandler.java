@@ -2,7 +2,7 @@ package com.github.houbb.idoc.core.handler.impl.metadata;
 
 import com.github.houbb.idoc.api.model.metadata.DocAnnotation;
 import com.github.houbb.idoc.common.handler.AbstractHandler;
-import com.thoughtworks.qdox.model.Annotation;
+import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 
 /**
@@ -10,7 +10,7 @@ import com.thoughtworks.qdox.model.JavaClass;
  * @author binbin.hou
  * @since 0.0.1
  */
-public class MetadataDocAnnotationHandler extends AbstractHandler<Annotation, DocAnnotation> {
+public class MetadataDocAnnotationHandler extends AbstractHandler<JavaAnnotation, DocAnnotation> {
 
     /**
      * 处理注解信息
@@ -20,9 +20,9 @@ public class MetadataDocAnnotationHandler extends AbstractHandler<Annotation, Do
      */
     @Override
     @SuppressWarnings("all")
-    protected DocAnnotation doHandle(Annotation target) {
+    protected DocAnnotation doHandle(JavaAnnotation target) {
         DocAnnotation docAnnotation = new DocAnnotation();
-        final JavaClass javaClass = target.getType().getJavaClass();
+        final JavaClass javaClass = target.getType();
 
         docAnnotation.setNamedParameters(target.getNamedParameterMap());
         docAnnotation.setProperties(target.getPropertyMap());

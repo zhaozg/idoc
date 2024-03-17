@@ -44,7 +44,7 @@ public class BaseDoc {
     /**
      * 访问级别
      */
-    private String[] modifiers;
+    private List<String> modifiers;
 
     /**
      * doc 标签列表
@@ -93,11 +93,11 @@ public class BaseDoc {
         this.remark = remark;
     }
 
-    public String[] getModifiers() {
+    public List<String> getModifiers() {
         return modifiers;
     }
 
-    public void setModifiers(String[] modifiers) {
+    public void setModifiers(List<String> modifiers) {
         this.modifiers = modifiers;
     }
 

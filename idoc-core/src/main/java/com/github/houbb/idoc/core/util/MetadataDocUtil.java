@@ -10,7 +10,7 @@ import com.github.houbb.idoc.core.handler.impl.metadata.MetadataDocAnnotationHan
 import com.github.houbb.idoc.core.handler.impl.metadata.MetadataDocFieldHandler;
 import com.github.houbb.idoc.core.handler.impl.metadata.MetadataDocMethodHandler;
 import com.github.houbb.idoc.core.handler.impl.metadata.MetadataDocTagHandler;
-import com.thoughtworks.qdox.model.Annotation;
+import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaField;
 import com.thoughtworks.qdox.model.JavaMethod;
@@ -29,7 +29,7 @@ public final class MetadataDocUtil {
      * @param docletTags 标签
      * @return 结果
      */
-    public static List<DocTag> buildDocTagList(final DocletTag[] docletTags) {
+    public static List<DocTag> buildDocTagList(final List<DocletTag> docletTags) {
         return ArrayUtil.buildList(docletTags, new MetadataDocTagHandler());
     }
 
@@ -38,7 +38,7 @@ public final class MetadataDocUtil {
      * @param annotations 注解
      * @return 结果
      */
-    public static List<DocAnnotation> buildDocAnnotationList(final Annotation[] annotations) {
+    public static List<DocAnnotation> buildDocAnnotationList(final List<JavaAnnotation> annotations) {
         return ArrayUtil.buildList(annotations, new MetadataDocAnnotationHandler());
     }
 

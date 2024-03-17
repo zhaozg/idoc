@@ -40,11 +40,11 @@ public final class ArrayUtil {
      * @param <R> 出参
      * @return 结果
      */
-    public static <T, R> List<R> buildList(final T[] targets, final IHandler<T, R> handler) {
-        if(isEmpty(targets)) {
+    public static <T, R> List<R> buildList(final List<T> targets, final IHandler<T, R> handler) {
+        if(targets.isEmpty()) {
             return Collections.emptyList();
         }
-        List<R> rList = new ArrayList<>(targets.length);
+        List<R> rList = new ArrayList<>(targets.size());
         for(T t : targets) {
             R r = handler.handle(t);
             if(ObjectUtil.isNull(t)) {
