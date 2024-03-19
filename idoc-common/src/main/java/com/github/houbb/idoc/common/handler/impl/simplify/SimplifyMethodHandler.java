@@ -16,7 +16,9 @@ import com.github.houbb.idoc.common.util.ObjectUtil;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * 简化方法属性处理类
@@ -25,7 +27,60 @@ import java.util.Map;
  * @since 0.0.1
  */
 public class SimplifyMethodHandler implements IHandler<DocMethod, SimplifyDocMethod> {
+
+    private String formatSignature(String signature, int limit) {
+        if (signature.length() < limit)
+            return signature;
+
+        Scanner scanner = new Scanner(signature);
+        scanner.useDelimiter("\\(|\\)|,");
+        List<String> tokens = new ArrayList<String>();
+
+        while (scanner.hasNext()) {
+            String token = scanner.next();
+            tokens.add(token);
+        }
+        scanner.close();
+
+        int i;
+        int pad = tokens.get(0).length();
+        for (i=1; i<tokens.size()-1; i++) {
+            if(pad + tokens.get(i).length()+1 > limit)
+            {
+                pad = 4;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(tokens.get(0)).append("(\n");
+        for (i=1; i<tokens.size()-1; i++) {
+            String token = tokens.get(i);
+            if(token.equals(")"))
+                break;
+            sb.append(" ".repeat(i==1 ? 1 + pad : pad) + token);
+            if (!tokens.get(i+1).equals(")"))
+                sb.append("\n");
+        }
+
+        sb.append(" ".repeat(pad) + ")");
+        i++;
+        if (i < tokens.size()) {
+            sb.append(" "+tokens.get(i)+"\n");
+            for (i++; i<tokens.size(); i++) {
+                String token = tokens.get(i);
+                sb.append(" ".repeat(pad+" throws ".length()) + token);
+                if (i+1 < tokens.size())
+                    sb.append(",\n");
+            }
+        }
+        return sb.toString();
+    }
+
     @Override
+	public String toString() {
+		return "SimplifyMethodHandler []";
+	}
+
+	@Override
     public SimplifyDocMethod handle(DocMethod docMethod) {
         if(null == docMethod) {
             return null;
@@ -34,7 +89,7 @@ public class SimplifyMethodHandler implements IHandler<DocMethod, SimplifyDocMet
         commonDocMethod.setComment(docMethod.getComment());
         commonDocMethod.setRemark(docMethod.getRemark());
         commonDocMethod.setName(docMethod.getName());
-        commonDocMethod.setSignature(docMethod.getSignature());
+        commonDocMethod.setSignature(formatSignature(docMethod.getSignature(), 80));
 
         //v0.2.0 添加第一行备注，避免过多，导致格式错乱
         String commentFirstLine = CommentUtil.getFirstLine(commonDocMethod.getComment());
